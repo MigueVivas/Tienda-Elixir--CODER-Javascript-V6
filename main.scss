@@ -14,25 +14,25 @@ $color5: white; */
 }
 
 body {
-    background-color: $color1;
-    color: $color2;
+    background-color: $color5;
+    color: $color6;
     font-family: "quicksand", sans-serif;
     a {
         text-decoration: none;
-        color: $color5;
+        color: $color6;
         font-weight: bold;
     }
 
 }
 
 header {
-    background-color: $color5;
+    background-color: $color3;
     font-size: 1.2rem;
     a {
-        color: $color1;
+        color: $color2;
     }
     img {
-        width: 140px;
+        width: 200px;
         height: 50px;
     }
 }

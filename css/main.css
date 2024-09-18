@@ -11,25 +11,25 @@ $color5: white; */
 }
 
 body {
-  background-color: black;
-  color: #cfb036;
+  background-color: white;
+  color: black;
   font-family: "quicksand", sans-serif;
 }
 body a {
   text-decoration: none;
-  color: white;
+  color: black;
   font-weight: bold;
 }
 
 header {
-  background-color: white;
+  background-color: #37839b;
   font-size: 1.2rem;
 }
 header a {
-  color: black;
+  color: #f07c06;
 }
 header img {
-  width: 140px;
+  width: 200px;
   height: 50px;
 }
 
