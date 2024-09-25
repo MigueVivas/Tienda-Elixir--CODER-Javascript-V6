@@ -61,7 +61,7 @@ function addUser() {
 let drinks = [
     { 
         id: 1,
-        img: "../img/havanaespecial.png",
+        img: "./img/havanaespecial.png",
         drinkType: "Ron", 
         drinkName: "Havana Club",
         price: 10000,
@@ -69,7 +69,7 @@ let drinks = [
     },
     { 
         id: 2,
-        img: "../img/havana7anios.png",
+        img: "./img/havana7anios.png",
         drinkType: "Ron",
         drinkName: "Havana 7 años",
         price: 13000,
@@ -77,7 +77,7 @@ let drinks = [
     },
     {
         id: 3,
-        img: "../img/havana15anios.png",
+        img: "./img/havana15anios.png",
         drinkType: "Ron",
         drinkName: "Havana 15 años",
         price: 18000,
@@ -85,7 +85,7 @@ let drinks = [
     },
     {
         id: 4,
-        img: "../img/havanaseleccion.png",
+        img: "./img/havanaseleccion.png",
         drinkType: "Ron",
         drinkName: "Havana Selección de Maestros",
         price: 25000,
