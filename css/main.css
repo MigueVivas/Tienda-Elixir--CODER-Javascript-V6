@@ -45,4 +45,49 @@ h1, h2 {
   align-items: center;
 }
 
+.indexParagraph {
+  height: 10rem;
+  display: flex;
+  justify-content: center;
+}
+
+.welcomeText {
+  height: 10rem;
+}
+
+.drinks-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.producto {
+  width: 80px;
+  padding: 10px;
+  margin: 10px;
+  text-align: center;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.producto img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.producto button {
+  background-color: #f07c06;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.producto button:hover {
+  background-color: #70553a;
+}
+
 /*# sourceMappingURL=main.css.map */
