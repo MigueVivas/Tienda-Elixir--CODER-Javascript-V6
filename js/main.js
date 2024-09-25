@@ -16,13 +16,25 @@ function ageCalculate(birth) {
     return age;
 }
 
+function validarEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
 function addUser() {
-    let email = prompt("Ingrese su correo electrónico");
+    let email;
+    do {
+        email = prompt("Ingrese su correo electrónico").trim();
+        if (!validarEmail(email)) {
+            alert("Correo inválido. Por favor, ingresá un correo válido.");
+        }
+    } while (!validarEmail(email)); // Repite hasta que el email sea válido
+
     let name;
     do {
         name = prompt("Ingresá tu nombre").trim();
         if (!name) {
-            alert("Nombre invalido. Por favor, ingresá un nombre valido");
+            alert("Nombre inválido. Por favor, ingresá un nombre válido");
         }
     } while (!name);
 
@@ -30,7 +42,7 @@ function addUser() {
     do {
         lastName = prompt("Ingresá tu apellido").trim();
         if (!lastName) {
-            alert("Apellido invalido. Por favor, ingresá un apellido valido");
+            alert("Apellido inválido. Por favor, ingresá un apellido válido");
         }
     } while (!lastName);
     
@@ -54,9 +66,10 @@ function addUser() {
 
     users.push(newUser);
     currentUser = newUser;
-    console.log("Usuario agregado con exito:", newUser);
+    console.log("Usuario agregado con éxito:", newUser);
     return newUser;
 }
+
 
 let drinks = [
     { 
