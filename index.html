@@ -29,9 +29,32 @@
                 
                 <p> Disfruta de nuestras bebidas con moderación y asegura momentos inolvidables sin excesos. Y recuerda, si eres menor de edad, no consumas bebidas alcohólicas.</p>    
             </div>
-        </div>         
+        </div>
         
-        <div id="drinks"></div>
+      
+        <form id="registroForm">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="lastName">Apellido:</label>
+            <input type="text" id="lastName" name="lastName" required><br><br>
+
+            <label for="email">Correo electrónico:</label>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <label for="birth">Fecha de nacimiento (dd/mm/aaaa):</label>
+            <input type="text" id="birth" name="birth" required><br><br>
+
+            <button type="submit">Registrar</button>
+        </form>
+
+        <div id="mensaje"></div>
+
+        <div id="productos" style="display:none;">
+            <h3>Lista de productos</h3>
+            <div id="drinks"></div>
+            <div id="carrito"></div>
+        </div>
         
     </main>
     <script src="./js/main.js"></script>

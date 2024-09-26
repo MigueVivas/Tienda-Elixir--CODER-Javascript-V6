@@ -1,75 +1,86 @@
-let users = []
 let currentUser = null;
-
-function ageCalculate(birth) {
-    const today = new Date();
-    const [day, month, year] = birth.split('/').map(Number);
-    if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 1 || month > 12 || year > today.getFullYear()) {
-        return null;
-    }
-    const birthdate = new Date(year, month - 1, day);
-    let age = today.getFullYear() - birthdate.getFullYear();
-    const actualMonth = today.getMonth() - birthdate.getMonth();
-    if (actualMonth < 0 || (actualMonth === 0 && today.getDate() < birthdate.getDate())) {
-        age--;
-    }
-    return age;
-}
+let users = [];
+let carrito = [];
 
 function validarEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
 }
 
-function addUser() {
-    let email;
-    do {
-        email = prompt("Ingrese su correo electrónico").trim();
-        if (!validarEmail(email)) {
-            alert("Correo inválido. Por favor, ingresá un correo válido.");
-        }
-    } while (!validarEmail(email)); // Repite hasta que el email sea válido
-
-    let name;
-    do {
-        name = prompt("Ingresá tu nombre").trim();
-        if (!name) {
-            alert("Nombre inválido. Por favor, ingresá un nombre válido");
-        }
-    } while (!name);
-
-    let lastName;
-    do {
-        lastName = prompt("Ingresá tu apellido").trim();
-        if (!lastName) {
-            alert("Apellido inválido. Por favor, ingresá un apellido válido");
-        }
-    } while (!lastName);
+function ageCalculate(birthDate) {
+    const [day, month, year] = birthDate.split('/');
+    const today = new Date();
+    const birth = new Date(year, month - 1, day);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
     
-    let birth;
-    let age;
-    do {
-        birth = prompt("Ingresá tu fecha de nacimiento (dd/mm/aaaa)");
-        age = ageCalculate(birth);
-        if (age === null) {
-            alert("Por favor, ingresá una fecha válida en el formato dd/mm/aaaa");
-        }    
-    } while (age === null);
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
 
-    let newUser = {
-        email: email,
-        name: name,
-        lastName: lastName,
-        birth: birth,
-        age: age
-    };
-
-    users.push(newUser);
-    currentUser = newUser;
-    console.log("Usuario agregado con éxito:", newUser);
-    return newUser;
+    return isNaN(age) ? null : age;
 }
 
+document.getElementById('registroForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const birth = document.getElementById('birth').value.trim();
+
+    if (!name || !lastName || !validarEmail(email)) {
+        alert("Por favor, llena los campos correctamente.");
+        return;
+    }
+    const age = ageCalculate(birth);
+    if (age === null) {
+        alert("Por favor, ingresá una fecha válida en el formato dd/mm/aaaa.");
+        return;
+    }
+
+    const newUser = { name, lastName, email, birth, age };
+    users.push(newUser);
+    currentUser = newUser;
+
+    document.getElementById('mensaje').innerText = `Usuario registrado con éxito: ${newUser.name} ${newUser.lastName}, ${newUser.age} años.`;
+    document.getElementById('registroForm').style.display = 'none';
+    document.getElementById('productos').style.display = 'block';
+
+    renderizarProductos();
+});
+
+function renderizarProductos() {
+    const contenedorBebidas = document.getElementById('drinks');
+    contenedorBebidas.innerHTML = '';
+
+    drinks.forEach(bebida => {
+        const divBebida = document.createElement('div');
+        divBebida.classList.add('producto');
+        divBebida.innerHTML = `
+            <img src="${bebida.img}" alt="${bebida.drinkName}">
+            <h3>${bebida.drinkName}</h3>
+            <p>Precio: $${bebida.price}</p>
+            <button class="agregar-carrito" data-id="${bebida.id}">Agregar al carrito</button>
+        `;
+        contenedorBebidas.appendChild(divBebida);
+    });
+}
+
+document.getElementById('drinks').addEventListener('click', function(e) {
+    if (e.target.classList.contains('agregar-carrito')) {
+        if (!currentUser) {
+            alert("Debes registrarte antes de agregar productos al carrito.");
+            return;
+        }
+
+        const bebidaId = e.target.getAttribute('data-id');
+        const bebidaSeleccionada = drinks.find(prod => prod.id == bebidaId);
+        
+        carrito.push(bebidaSeleccionada);
+        document.getElementById('carrito').innerText = `Productos en el carrito: ${carrito.map(b => b.drinkName).join(', ')}`;
+    }
+});
 
 let drinks = [
     { 
@@ -130,68 +141,6 @@ let drinks = [
     },
 ];
 
-function showMenu(filter = null) {
-    let menu = "Menú de bebidas: \n";
-    let filteredDrinks = drinks;
-    if (filter !== null) {
-        filteredDrinks = drinks.filter(drink => drink.isAlcoholic === filter);
-    }
-    filteredDrinks.forEach((drink, index) => {
-        menu += `${index + 1}. ${drink.drinkName} (${drink.drinkType}) - Precio: $${drink.price}\n`;
-    });
-    menu += "0. Finalizar compra\n";
-    return { menu, filteredDrinks };
-}
-
-function startPurchase() {
-    let total = 0;
-    let selectedItems = [];
-    let hasAlcoholicDrinks = false;
-
-    let filterChoice = prompt("¿Qué tipo de bebidas deseas ver?\n1. Bebidas alcohólicas\n2. Bebidas no alcohólicas\n3. Todas las bebidas");
-    let filter = null;
-    
-    if (filterChoice == "1") {
-        if (currentUser && currentUser.age < 18) {
-            alert("Lo siento, debes tener al menos 18 años para comprar bebidas alcohólicas");
-            return;
-        }
-        filter = true;
-    } else if (filterChoice == "2") {
-        filter = false;
-    }
-
-    while (true) {
-        let { menu, filteredDrinks } = showMenu(filter);
-        let choice = parseInt(prompt(menu));
-
-        if (choice === 0) {
-            break;
-        } else if (choice > 0 && choice <= filteredDrinks.length) {
-            let selectedDrink = filteredDrinks[choice - 1];
-            selectedItems.push(selectedDrink);
-            total += selectedDrink.price;
-
-            if (selectedDrink.isAlcoholic) {
-                hasAlcoholicDrinks = true;
-            }
-            alert(`Has añadido: ${selectedDrink.drinkName}. Total actual: $${total}`);
-        } else {
-            alert("No has seleccionado ningún producto.");
-        }
-    }
-    if (selectedItems.length > 0) {
-        let purchaseSummary = "Tu compra es:\n";
-        selectedItems.forEach(item => {
-            purchaseSummary += `- ${item.drinkName} : $${item.price}\n`;
-        });
-        purchaseSummary += `Total: $${total}`;
-        alert(purchaseSummary);
-    } else {
-        alert("No has seleccionado ningún producto");
-    }
-}
-
 const contenedorBebidas = document.getElementById('drinks');
 
 if (contenedorBebidas) {
@@ -223,7 +172,6 @@ contenedorBebidas.addEventListener('click', (e) => {
         let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
         carrito.push(bebidaSeleccionada);
         localStorage.setItem('carrito', JSON.stringify(carrito));
-        alert(`${bebidaSeleccionada.drinkName} ha sido agregada al carrito`);
     }
 });
 
