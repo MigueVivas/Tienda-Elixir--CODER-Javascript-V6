@@ -31,29 +31,30 @@
             </div>
         </div>
         
-      
-        <form id="registroForm">
-            <label for="name">Nombre:</label>
-            <input type="text" id="name" name="name" required><br><br>
-
-            <label for="lastName">Apellido:</label>
-            <input type="text" id="lastName" name="lastName" required><br><br>
-
-            <label for="email">Correo electrónico:</label>
-            <input type="email" id="email" name="email" required><br><br>
-
-            <label for="birth">Fecha de nacimiento (dd/mm/aaaa):</label>
-            <input type="text" id="birth" name="birth" required><br><br>
-
-            <button type="submit">Registrar</button>
-        </form>
-
         <div id="mensaje"></div>
 
-        <div id="productos" style="display:none;">
+        <div id="registroForm">
+            <form id="registroForm">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" required><br><br>
+
+                <label for="lastName">Apellido:</label>
+                <input type="text" id="lastName" name="lastName" required><br><br>
+
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email" required><br><br>
+
+                <label for="birth">Fecha de nacimiento (dd/mm/aaaa):</label>
+                <input type="text" id="birth" name="birth" required><br><br>
+
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+
+        <div id="productos">
             <h3>Lista de productos</h3>
-            <div id="drinks"></div>
-            <div id="carrito"></div>
+            <div id="drinks" class="drinks-container"></div>
+            <div id="carrito" class="carritoBox"></div>
         </div>
         
     </main>

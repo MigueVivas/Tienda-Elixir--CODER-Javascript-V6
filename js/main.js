@@ -1,6 +1,24 @@
 let currentUser = null;
 let users = [];
 let carrito = [];
+let totalCarrito
+
+function cargarDatosDesdeLocalStorage() {
+    const usuarioGuardado = JSON.parse(localStorage.getItem('usuario'));
+    if (usuarioGuardado) {
+        currentUser = usuarioGuardado;
+        document.getElementById('mensaje').innerText = `Bienvenido de nuevo, ${currentUser.name}!`;
+    }
+
+    const carritoGuardado = JSON.parse(localStorage.getItem('carrito'));
+    if (carritoGuardado) {
+        carrito = carritoGuardado;
+        totalCarrito = calcularTotalCarrito();
+        renderizarCarrito();
+    }
+}
+
+cargarDatosDesdeLocalStorage();
 
 function validarEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,15 +61,17 @@ document.getElementById('registroForm').addEventListener('submit', function(even
     users.push(newUser);
     currentUser = newUser;
 
+    localStorage.setItem('usuario', JSON.stringify(newUser));
+
     document.getElementById('mensaje').innerText = `Usuario registrado con éxito: ${newUser.name} ${newUser.lastName}, ${newUser.age} años.`;
     document.getElementById('registroForm').style.display = 'none';
     document.getElementById('productos').style.display = 'block';
 
-    renderizarProductos();
 });
 
 function renderizarProductos() {
     const contenedorBebidas = document.getElementById('drinks');
+    contenedorBebidas.classList.add('drinks-container');
     contenedorBebidas.innerHTML = '';
 
     drinks.forEach(bebida => {
@@ -67,10 +87,35 @@ function renderizarProductos() {
     });
 }
 
+function renderizarCarrito() {
+    const carritoDiv = document.getElementById('carrito');
+    carritoDiv.innerHTML = '';
+
+    carrito.forEach((producto, index) => {
+        const productoCarrito = document.createElement('div');
+        productoCarrito.classList.add('producto-carrito');
+        productoCarrito.innerHTML = `
+            <span>${producto.drinkName} - $${producto.price}</span>
+            <button class="eliminar-producto" data-index="${index}">Eliminar</button>
+        `;
+        carritoDiv.appendChild(productoCarrito);
+    });
+
+    const totalDiv = document.createElement('div');
+    totalDiv.classList.add('total');
+    totalDiv.innerHTML = `<strong>Total: $${totalCarrito}</strong>`;
+    carritoDiv.appendChild(totalDiv);
+}
+
+function calcularTotalCarrito() {
+    return carrito.reduce((total, producto) => total + producto.price, 0);
+}
+
 document.getElementById('drinks').addEventListener('click', function(e) {
     if (e.target.classList.contains('agregar-carrito')) {
         if (!currentUser) {
             alert("Debes registrarte antes de agregar productos al carrito.");
+            document.getElementById('registroForm').style.display = 'block';
             return;
         }
 
@@ -78,7 +123,19 @@ document.getElementById('drinks').addEventListener('click', function(e) {
         const bebidaSeleccionada = drinks.find(prod => prod.id == bebidaId);
         
         carrito.push(bebidaSeleccionada);
-        document.getElementById('carrito').innerText = `Productos en el carrito: ${carrito.map(b => b.drinkName).join(', ')}`;
+        totalCarrito = calcularTotalCarrito();
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        renderizarCarrito();
+    }
+});
+
+document.getElementById('carrito').addEventListener('click', function(e) {
+    if (e.target.classList.contains('eliminar-producto')) {
+        const index = e.target.getAttribute('data-index');
+        carrito.splice(index, 1);
+        totalCarrito = calcularTotalCarrito(); 
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        renderizarCarrito();
     }
 });
 
@@ -141,37 +198,4 @@ let drinks = [
     },
 ];
 
-const contenedorBebidas = document.getElementById('drinks');
-
-if (contenedorBebidas) {
-    contenedorBebidas.classList.add('drinks-container');
-    drinks.forEach(bebida => {
-        const divBebida = document.createElement('div');
-        divBebida.classList.add('producto');
-        divBebida.innerHTML = `
-        <img src="${bebida.img}" alt="${bebida.drinkName}">
-        <h3>${bebida.drinkName}</h3>
-        <p>Precio: $${bebida.price}</p>
-        <button class="agregar-carrito" data-id="${bebida.id}">Agregar al carrito</button>
-        `;
-        contenedorBebidas.appendChild(divBebida);
-    });
-} else {
-    console.error("El contenedor de bebidas no fue encontrado en el HTML.");
-}
-
-contenedorBebidas.addEventListener('click', (e) => {
-    if (e.target.classList.contains('agregar-carrito')) {
-        if (!currentUser) {
-            alert("Debes registrarte antes de agregar productos al carrito.");
-            currentUser = addUser();
-        }
-        
-        const bebidaId = e.target.getAttribute('data-id');
-        const bebidaSeleccionada = drinks.find(prod => prod.id == bebidaId);
-        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-        carrito.push(bebidaSeleccionada);
-        localStorage.setItem('carrito', JSON.stringify(carrito));
-    }
-});
-
+renderizarProductos();
