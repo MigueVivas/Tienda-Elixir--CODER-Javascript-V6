@@ -67,6 +67,7 @@ document.getElementById('registroForm').addEventListener('submit', function(even
     document.getElementById('registroForm').style.display = 'none';
     document.getElementById('productos').style.display = 'block';
 
+    renderizarProductos();
 });
 
 function renderizarProductos() {
@@ -105,6 +106,13 @@ function renderizarCarrito() {
     totalDiv.classList.add('total');
     totalDiv.innerHTML = `<strong>Total: $${totalCarrito}</strong>`;
     carritoDiv.appendChild(totalDiv);
+
+    const finalizarButton = document.getElementById('finalizarCompra');
+      if (carrito.length > 0) {
+          finalizarButton.style.display = 'block';
+      } else {
+          finalizarButton.style.display = 'none';
+      }
 }
 
 function calcularTotalCarrito() {
@@ -137,6 +145,23 @@ document.getElementById('carrito').addEventListener('click', function(e) {
         localStorage.setItem('carrito', JSON.stringify(carrito));
         renderizarCarrito();
     }
+});
+
+document.getElementById('finalizarCompra').addEventListener('click', function() {
+    alert("Gracias por su compra!");
+
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('carrito');
+
+    currentUser = null;
+    carrito = [];
+    totalCarrito = 0;
+
+    document.getElementById('mensaje').innerText = '';
+    document.getElementById('registroForm').style.display = 'block';
+    document.getElementById('productos').style.display = 'none';
+    document.getElementById('drinks').innerHTML = '';
+    document.getElementById('carrito').innerHTML = '';
 });
 
 let drinks = [
@@ -198,4 +223,3 @@ let drinks = [
     },
 ];
 
-renderizarProductos();
