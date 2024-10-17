@@ -8,6 +8,11 @@ function cargarDatosDesdeLocalStorage() {
     if (usuarioGuardado) {
         currentUser = usuarioGuardado;
         document.getElementById('mensaje').innerText = `Bienvenido de nuevo, ${currentUser.name}!`;
+        document.getElementById('registroForm').style.display = 'none';
+        document.getElementById('productos').style.display = 'block';
+    } else {
+        document.getElementById('registroForm').style.display = 'block';
+        document.getElementById('productos').style.display = 'none';
     }
 
     const carritoGuardado = JSON.parse(localStorage.getItem('carrito'));
@@ -67,7 +72,7 @@ document.getElementById('registroForm').addEventListener('submit', function(even
     document.getElementById('registroForm').style.display = 'none';
     document.getElementById('productos').style.display = 'block';
 
-    renderizarProductos();
+    
 });
 
 function renderizarProductos() {
@@ -96,9 +101,11 @@ function renderizarCarrito() {
         const productoCarrito = document.createElement('div');
         productoCarrito.classList.add('producto-carrito');
         productoCarrito.innerHTML = `
-            <span>${producto.drinkName} - $${producto.price}</span>
-            <button class="eliminar-producto" data-index="${index}">Eliminar</button>
-        `;
+        <span>${producto.drinkName} - $${producto.price} x ${producto.quantity}</span>
+        <button class="decrease-quantity" data-id="${producto.id}">-</button>
+        <button class="increase-quantity" data-id="${producto.id}">+</button>
+        <button class="eliminar-producto" data-index="${index}">Eliminar</button>
+    `;
         carritoDiv.appendChild(productoCarrito);
     });
 
@@ -116,7 +123,7 @@ function renderizarCarrito() {
 }
 
 function calcularTotalCarrito() {
-    return carrito.reduce((total, producto) => total + producto.price, 0);
+    return carrito.reduce((total, producto) => total + producto.price * producto.quantity, 0);
 }
 
 document.getElementById('drinks').addEventListener('click', function(e) {
@@ -130,7 +137,14 @@ document.getElementById('drinks').addEventListener('click', function(e) {
         const bebidaId = e.target.getAttribute('data-id');
         const bebidaSeleccionada = drinks.find(prod => prod.id == bebidaId);
         
-        carrito.push(bebidaSeleccionada);
+        const itemInCart = carrito.find(prod => prod.id == bebidaSeleccionada.id);
+        
+        if (itemInCart) {
+            itemInCart.quantity++;
+        } else {
+            carrito.push({ ...bebidaSeleccionada, quantity: 1 });
+        }
+
         totalCarrito = calcularTotalCarrito();
         localStorage.setItem('carrito', JSON.stringify(carrito));
         renderizarCarrito();
@@ -138,16 +152,47 @@ document.getElementById('drinks').addEventListener('click', function(e) {
 });
 
 document.getElementById('carrito').addEventListener('click', function(e) {
+    const id = e.target.getAttribute('data-id');
+
+    if (e.target.classList.contains('increase-quantity')) {
+        const item = carrito.find(prod => prod.id == id);
+        if (item) {
+            item.quantity++;
+            totalCarrito = calcularTotalCarrito();
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            renderizarCarrito();
+        }
+    }
+
+    if (e.target.classList.contains('decrease-quantity')) {
+        const item = carrito.find(prod => prod.id == id);
+        if (item && item.quantity > 1) {
+            item.quantity--;
+        } else {
+            carrito = carrito.filter(prod => prod.id != id);
+        }
+        totalCarrito = calcularTotalCarrito();
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        renderizarCarrito();
+    }
+
     if (e.target.classList.contains('eliminar-producto')) {
         const index = e.target.getAttribute('data-index');
         carrito.splice(index, 1);
-        totalCarrito = calcularTotalCarrito(); 
+        totalCarrito = calcularTotalCarrito();
         localStorage.setItem('carrito', JSON.stringify(carrito));
         renderizarCarrito();
     }
 });
 
 document.getElementById('finalizarCompra').addEventListener('click', function() {
+
+    if (!currentUser) {
+        alert("Debes registrarte para finalizar la compra.");
+        document.getElementById('registroForm').style.display = 'block';
+        return;
+    }
+
     alert("Gracias por su compra!");
 
     localStorage.removeItem('usuario');
@@ -223,3 +268,4 @@ let drinks = [
     },
 ];
 
+renderizarProductos();
