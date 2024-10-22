@@ -44,36 +44,68 @@ function ageCalculate(birthDate) {
     return isNaN(age) ? null : age;
 }
 
-document.getElementById('registroForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-
+document.getElementById('registroForm').addEventListener('input', function(event) {
     const name = document.getElementById('name').value.trim();
     const lastName = document.getElementById('lastName').value.trim();
     const email = document.getElementById('email').value.trim();
     const birth = document.getElementById('birth').value.trim();
-
-    if (!name || !lastName || !validarEmail(email)) {
-        alert("Por favor, llena los campos correctamente.");
-        return;
+  
+    document.getElementById('nameError').innerText = '';
+    document.getElementById('lastNameError').innerText = '';
+    document.getElementById('emailError').innerText = '';
+    document.getElementById('birthError').innerText = '';
+  
+      if (!name) {
+      document.getElementById('nameError').innerText = 'El nombre es obligatorio.';
     }
+  
+    if (!lastName) {
+      document.getElementById('lastNameError').innerText = 'El apellido es obligatorio.';
+    }
+  
+    if (email && !validarEmail(email)) {
+      document.getElementById('emailError').innerText = 'Por favor, ingresa un email válido.';
+    }
+  
     const age = ageCalculate(birth);
-    if (age === null) {
-        alert("Por favor, ingresá una fecha válida en el formato dd/mm/aaaa.");
-        return;
+    if (birth && (isNaN(age) || age < 0)) {
+      document.getElementById('birthError').innerText = 'Por favor, ingresa una fecha válida.';
     }
+  });
 
+  document.getElementById('registroForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+  
+    const name = document.getElementById('name').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const birth = document.getElementById('birth').value.trim();
+  
+    if (!name || !lastName || !validarEmail(email)) {
+      Swal.fire("Por favor, llena los campos correctamente.");
+      return;
+    }
+  
+    const age = ageCalculate(birth);
+    if (age === null || isNaN(age)) {
+      Swal.fire({
+        title: "ERROR DE FORMATO",
+        text: "Por favor, ingresá una fecha válida en el formato dd/mm/aaaa.",
+        icon: "error"
+    });
+      return;
+    }
+  
     const newUser = { name, lastName, email, birth, age };
     users.push(newUser);
     currentUser = newUser;
-
+  
     localStorage.setItem('usuario', JSON.stringify(newUser));
-
+  
     document.getElementById('mensaje').innerText = `Usuario registrado con éxito: ${newUser.name} ${newUser.lastName}, ${newUser.age} años.`;
     document.getElementById('registroForm').style.display = 'none';
     document.getElementById('productos').style.display = 'block';
-
-    
-});
+  });
 
 function renderizarProductos() {
     const contenedorBebidas = document.getElementById('drinks');
@@ -102,8 +134,8 @@ function renderizarCarrito() {
         productoCarrito.classList.add('producto-carrito');
         productoCarrito.innerHTML = `
         <span>${producto.drinkName} - $${producto.price} x ${producto.quantity}</span>
-        <button class="decrease-quantity" data-id="${producto.id}">-</button>
         <button class="increase-quantity" data-id="${producto.id}">+</button>
+        <button class="decrease-quantity" data-id="${producto.id}">-</button>
         <button class="eliminar-producto" data-index="${index}">Eliminar</button>
     `;
         carritoDiv.appendChild(productoCarrito);
@@ -129,7 +161,11 @@ function calcularTotalCarrito() {
 document.getElementById('drinks').addEventListener('click', function(e) {
     if (e.target.classList.contains('agregar-carrito')) {
         if (!currentUser) {
-            alert("Debes registrarte antes de agregar productos al carrito.");
+            Swal.fire({
+                title: "Registro de usuario!",
+                text: "Debes registrarte antes de agregar productos al carrito.",
+                icon: "warning"
+            });
             document.getElementById('registroForm').style.display = 'block';
             return;
         }
@@ -148,6 +184,16 @@ document.getElementById('drinks').addEventListener('click', function(e) {
         totalCarrito = calcularTotalCarrito();
         localStorage.setItem('carrito', JSON.stringify(carrito));
         renderizarCarrito();
+
+        Toastify({
+            text: `¡${bebidaSeleccionada.drinkName} agregado al carrito!`,
+            duration: 3000,
+            gravity: "bottom",
+            position: "right",
+            backgroundColor: "#F07C06",
+            close: true,
+            stopOnFocus: true
+        }).showToast();
     }
 });
 
@@ -188,25 +234,50 @@ document.getElementById('carrito').addEventListener('click', function(e) {
 document.getElementById('finalizarCompra').addEventListener('click', function() {
 
     if (!currentUser) {
-        alert("Debes registrarte para finalizar la compra.");
+        Swal.fire({
+            title: "Registro de usuario!",
+            text: "Debes registrarte para finalizar la compra.",
+            icon: "warning"
+        });
+    
         document.getElementById('registroForm').style.display = 'block';
         return;
     }
+    Swal.fire({
+        title: '¿Desea finalizar la compra?',
+        text: "Puedes seguir comprando si lo deseas.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, finalizar',
+        cancelButtonText: 'Seguir comprando',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: "Gracias por su compra!",
+                icon: "success"
+            });
 
-    alert("Gracias por su compra!");
+            localStorage.removeItem('usuario');
+            localStorage.removeItem('carrito');
 
-    localStorage.removeItem('usuario');
-    localStorage.removeItem('carrito');
+            currentUser = null;
+            carrito = [];
+            totalCarrito = 0;
 
-    currentUser = null;
-    carrito = [];
-    totalCarrito = 0;
-
-    document.getElementById('mensaje').innerText = '';
-    document.getElementById('registroForm').style.display = 'block';
-    document.getElementById('productos').style.display = 'none';
-    document.getElementById('drinks').innerHTML = '';
-    document.getElementById('carrito').innerHTML = '';
+            document.getElementById('mensaje').innerText = '';
+            document.getElementById('registroForm').style.display = 'block';
+            document.getElementById('productos').style.display = 'none';
+            document.getElementById('drinks').innerHTML = '';
+            document.getElementById('carrito').innerHTML = '';
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire(
+                '¡Compra en proceso!',
+                'Puedes continuar agregando productos a tu carrito.',
+                'info'
+            );
+        }
+    });
 });
 
 let drinks = [
@@ -244,25 +315,25 @@ let drinks = [
     },
     {
         id: 5,
-        img: "agua",
+        img: "./img/aguavillavicencio.jpg",
         drinkType: "Agua",
-        drinkName: "Agua sin gas",
+        drinkName: "Agua sin gas 500 ml",
         price: 1000,
         isAlcoholic: false
     },
     { 
         id: 6,
-        img: "gaseosa",
+        img: "./img/cocacola175.png",
         drinkType: "Gaseosas",
-        drinkName: "Coca Cola",
+        drinkName: "Coca Cola 1.5 Lts",
         price: 3500,
         isAlcoholic: false
     },
     { 
         id: 7,
-        img: "jugo",
+        img: "./img/cepitanaranja.jpg",
         drinkType: "Jugos",
-        drinkName: "Jugo de Naranja",
+        drinkName: "Jugo de Naranja 1 Lts",
         price: 2500,
         isAlcoholic: false
     },

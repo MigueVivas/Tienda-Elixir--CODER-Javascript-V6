@@ -46,9 +46,14 @@ h1, h2 {
 }
 
 .indexParagraph {
-  height: 10rem;
+  padding: 15px;
+  border-radius: 20px;
+  line-height: 1.5;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
 }
 
 .welcomeText {
@@ -58,27 +63,47 @@ h1, h2 {
 .drinks-container {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: 20px;
-  justify-content: space-around;
-  margin-top: 20px;
 }
 
 .producto {
-  width: 80px;
-  padding: 10px;
-  margin: 10px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 200px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   background-color: #f4f4f4;
   border: 1px solid #ddd;
   border-radius: 10px;
+  text-align: center;
+  transition: transform 0.3s ease;
 }
 
 .producto img {
   max-width: 100%;
   height: auto;
+  max-height: 150px;
+  object-fit: center;
   border-radius: 5px;
 }
 
+@media (max-width: 768px) {
+  .drinks-container {
+    justify-content: center;
+  }
+  .producto {
+    max-width: 45%;
+  }
+}
+@media (max-width: 576px) {
+  .producto {
+    max-width: 100%;
+  }
+}
 .producto button {
   background-color: #f07c06;
   color: white;
@@ -99,6 +124,59 @@ h1, h2 {
   margin-top: 20px;
 }
 
+.decrease-quantity {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.decrease-quantity:hover {
+  background-color: #e53935;
+}
+
+.increase-quantity {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.increase-quantity:hover {
+  background-color: #45a049;
+}
+
+.eliminar-producto {
+  background-color: #f07c06;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-finalizar {
+  background-color: #05B8F0;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  display: block;
+  margin-top: 20px;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
 .producto-carrito {
   display: flex;
   justify-content: space-between;
@@ -110,6 +188,11 @@ h1, h2 {
   font-size: 18px;
   font-weight: bold;
   text-align: right;
+}
+
+.error {
+  color: red;
+  font-size: 0.9em;
 }
 
 /*# sourceMappingURL=main.css.map */

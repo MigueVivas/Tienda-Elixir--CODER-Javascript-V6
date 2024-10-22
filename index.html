@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elixir Store</title>
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="./css/main.css">
 </head>
 <body>
     <header>
-        <div class="nav">
+        <div>
             <ul class="menu">
                 <li class="menuItem"><a href="./pages/store.html" title="Tienda">Tienda</a></li>
                 <a href="./index.html" title="inicio"><img class="imgheader" src="./img/elixir-main.png" alt="Elixir Logo"></a></li>
@@ -21,44 +27,58 @@
             <h1>Bienvenidos a Elixir</h1>
             <h2>Tu tienda de bebidas premium online.</h2>
         </div>
-        <div class="indexParagraph">
-            <div class="welcomeText">
-                <p>Explora nuestro amplio catálogo de bebidas alcohólicas y no alcohólicas, cuidadosamente seleccionadas para cada ocasión. Desde refrescantes jugos y sodas hasta los licores más exquisitos, en Elixir encontrarás todo lo que necesitas para disfrutar con amigos, familia o simplemente darte un gusto especial.</p>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p>Explora nuestro amplio catálogo de bebidas alcohólicas y no alcohólicas, cuidadosamente seleccionadas para cada ocasión. Desde refrescantes jugos y sodas hasta los licores más exquisitos, en Elixir encontrarás todo lo que necesitas para disfrutar con amigos, familia o simplemente darte un gusto especial.</p>
                 
                 <p> Elige tus productos favoritos y crea la combinación perfecta. Nuestro sistema de compra en línea es fácil de usar, permitiéndote calcular el precio total de tu pedido en solo unos clics. En Elixir, cada compra es una experiencia única.</p>
                 
-                <p> Disfruta de nuestras bebidas con moderación y asegura momentos inolvidables sin excesos. Y recuerda, si eres menor de edad, no consumas bebidas alcohólicas.</p>    
+                <p> Disfruta de nuestras bebidas con moderación y asegura momentos inolvidables sin excesos. Y recuerda, si eres menor de edad, no consumas bebidas alcohólicas.</p>
+                </div>    
             </div>
         </div>
         
         <div id="mensaje"></div>
 
-        <div id="registroForm" style="display: none;">
-            <form>
-                <label for="name">Nombre:</label>
-                <input type="text" id="name" name="name" required><br><br>
-
-                <label for="lastName">Apellido:</label>
-                <input type="text" id="lastName" name="lastName" required><br><br>
-
-                <label for="email">Correo electrónico:</label>
-                <input type="email" id="email" name="email" required><br><br>
-
-                <label for="birth">Fecha de nacimiento (dd/mm/aaaa):</label>
-                <input type="text" id="birth" name="birth" required><br><br>
-
-                <button type="submit">Registrar</button>
-            </form>
+        <div id="registroForm" class="container" style="display: none;">
+            <div class="row">
+                <div class="col">
+                    <form>
+                        <label for="name">Nombre:</label>
+                        <input type="text" id="name" name="name">
+                        <span id="nameError" class="error"></span><br>
+                      
+                        <label for="lastName">Apellido:</label>
+                        <input type="text" id="lastName" name="lastName">
+                        <span id="lastNameError" class="error"></span><br>
+                      
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email">
+                        <span id="emailError" class="error"></span><br>
+                      
+                        <label for="birth">Fecha de nacimiento (dd/mm/aaaa):</label>
+                        <input type="text" id="birth" name="birth">
+                        <span id="birthError" class="error"></span><br>
+                      
+                        <button type="submit">Registrar</button>
+                    </form>
+                </div>
+            </div>
         </div>
+
+        <span id="mensaje"></span>
 
         <div id="productos" style="display: none;">
             <h3>Lista de productos</h3>
             <div id="drinks" class="drinks-container"></div>
             <div id="carrito" class="carritoBox"></div>
-            <button id="finalizarCompra" style="display: none;">Finalizar Compra</button>
+            <button id="finalizarCompra" class="btn-finalizar" style="display: none;">Finalizar Compra</button>
         </div>
         
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="./js/main.js"></script>
 </body>
 </html>
